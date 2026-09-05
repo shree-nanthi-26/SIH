@@ -28,6 +28,36 @@ const currentSkillSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const qualificationSchema = new mongoose.Schema(
+  {
+    degree: { type: String, required: true, trim: true },
+    field: { type: String, trim: true, default: '' },
+    institution: { type: String, trim: true, default: '' },
+    year: { type: Number, default: null },
+  },
+  { _id: false }
+);
+
+const experienceSchema = new mongoose.Schema(
+  {
+    organization: { type: String, required: true, trim: true },
+    role: { type: String, required: true, trim: true },
+    fromYear: { type: Number, required: true },
+    toYear: { type: Number, default: null }, // nullable for current
+  },
+  { _id: false }
+);
+
+const previousTrainingSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true, trim: true },
+    provider: { type: String, trim: true, default: '' },
+    completedAt: { type: Date, default: null },
+    certificateUrl: { type: String, trim: true, default: '' },
+  },
+  { _id: false }
+);
+
 const officerProfileSchema = new mongoose.Schema(
   {
     user: {
@@ -42,6 +72,9 @@ const officerProfileSchema = new mongoose.Schema(
       default: null,
     },
     currentSkills: [currentSkillSchema],
+    qualifications: [qualificationSchema],
+    experience: [experienceSchema],
+    previousTrainings: [previousTrainingSchema],
     /** Completed learning resource IDs. */
     completedResources: [
       {

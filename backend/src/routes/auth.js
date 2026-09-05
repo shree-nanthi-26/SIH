@@ -5,8 +5,9 @@ const {
   refreshTokenHandler,
   logout,
   getMe,
+  getUsers,
 } = require('../controllers/authController');
-const { protect } = require('../middleware/auth');
+const { protect, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -15,5 +16,6 @@ router.post('/login', login);
 router.post('/refresh-token', refreshTokenHandler);
 router.post('/logout', protect, logout);
 router.get('/me', protect, getMe);
+router.get('/users', protect, authorize('admin'), getUsers);
 
 module.exports = router;

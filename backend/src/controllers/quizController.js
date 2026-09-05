@@ -1,6 +1,7 @@
 const Quiz = require('../models/Quiz');
 const QuizAttempt = require('../models/QuizAttempt');
 const { scoreAttempt } = require('../services/quizService');
+const { selectNextQuestions } = require('../services/adaptiveQuizService');
 const { sendSuccess, sendError } = require('../utils/response');
 const { asyncHandler } = require('../middleware/errorHandler');
 const { paginate } = require('../utils/pagination');
@@ -31,7 +32,13 @@ const getQuizById = asyncHandler(async (req, res) => {
     .populate('skill', 'name category')
     .populate('createdBy', 'name');
   if (!quiz) return sendError(res, 404, 'Quiz not found');
-  sendSuccess(res, 200, quiz);
+
+  const quizObj = quiz.toObject();
+  const officerId = req.user ? req.user._id : req.query.officerId;
+  const skillId = quiz.skill ? (quiz.skill._id || quiz.skill) : null;
+  quizObj.questions = await selectNextQuestions(officerId, skillId, quizObj.questions);
+
+  sendSuccess(res, 200, quizObj);
 });
 
 /**

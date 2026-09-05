@@ -16,13 +16,16 @@ const skillSchema = new mongoose.Schema(
       required: [true, 'Category is required'],
       trim: true,
       enum: [
+        'Statistical',
         'Technical',
-        'Analytical',
-        'Domain',
-        'Managerial',
-        'Communication',
-        'Digital',
+        'DigitalGovernance',
+        'BehaviouralManagerial',
       ],
+    },
+    subDomain: {
+      type: String,
+      trim: true,
+      default: '',
     },
     description: {
       type: String,

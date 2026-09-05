@@ -11,6 +11,7 @@ const getResources = asyncHandler(async (req, res) => {
   if (req.query.skill) filter.skills = req.query.skill;
   if (req.query.type) filter.type = req.query.type;
   if (req.query.source) filter.source = req.query.source;
+  if (req.query.language) filter.language = req.query.language;
 
   const total = await LearningResource.countDocuments(filter);
   const { skip, limit, meta } = paginate(req.query, total);

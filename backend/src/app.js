@@ -13,6 +13,8 @@ const quizRoutes = require('./routes/quizzes');
 const resourceRoutes = require('./routes/resources');
 const dashboardRoutes = require('./routes/dashboard');
 const igotMockRoutes = require('./routes/igotMock');
+const nsstaMockRoutes = require('./routes/nsstaMock');
+const ssoAuthRoutes = require('./routes/ssoAuth');
 
 const app = express();
 
@@ -30,6 +32,7 @@ app.get('/api/v1/health', (req, res) => {
 
 // --------------- API Routes ---------------
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/sso', ssoAuthRoutes);
 app.use('/api/v1/officers', officerRoutes);
 app.use('/api/v1/skills', skillRoutes);
 app.use('/api/v1/roles', roleRoutes);
@@ -37,6 +40,7 @@ app.use('/api/v1/quizzes', quizRoutes);
 app.use('/api/v1/resources', resourceRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/igot', igotMockRoutes);
+app.use('/api/v1/nssta', nsstaMockRoutes);
 
 // --------------- 404 Handler ---------------
 app.use((req, res) => {

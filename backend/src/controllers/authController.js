@@ -1,27 +1,13 @@
 const jwt = require('jsonwebtoken');
+const { paginate } = require('../utils/pagination');
 const config = require('../config/env');
 const User = require('../models/User');
 const OfficerProfile = require('../models/OfficerProfile');
 const { sendSuccess, sendError } = require('../utils/response');
 const { asyncHandler } = require('../middleware/errorHandler');
+const { generateAccessToken, generateRefreshToken } = require('../utils/tokens');
 
-/**
- * Generate JWT access token.
- * @param {string} id - User ID
- * @returns {string}
- */
-const generateAccessToken = (id) =>
-  jwt.sign({ id }, config.jwtSecret, { expiresIn: config.jwtExpire });
 
-/**
- * Generate JWT refresh token.
- * @param {string} id - User ID
- * @returns {string}
- */
-const generateRefreshToken = (id) =>
-  jwt.sign({ id }, config.jwtRefreshSecret, {
-    expiresIn: config.jwtRefreshExpire,
-  });
 
 /**
  * POST /api/v1/auth/register
@@ -151,4 +137,25 @@ const getMe = asyncHandler(async (req, res) => {
   sendSuccess(res, 200, { user: req.user });
 });
 
-module.exports = { register, login, refreshTokenHandler, logout, getMe };
+/**
+ * GET /api/v1/users
+ * Admin-only: list all users with optional role filter and pagination.
+ */
+const getUsers = asyncHandler(async (req, res) => {
+  const filter = {};
+  if (req.query.role) filter.role = req.query.role;
+  if (req.query.department) filter.department = new RegExp(req.query.department, 'i');
+
+  const total = await User.countDocuments(filter);
+  const { skip, limit, meta } = paginate(req.query, total);
+
+  const users = await User.find(filter)
+    .select('-password -refreshToken')
+    .sort('-createdAt')
+    .skip(skip)
+    .limit(limit);
+
+  sendSuccess(res, 200, users, meta);
+});
+
+module.exports = { register, login, refreshTokenHandler, logout, getMe, getUsers };

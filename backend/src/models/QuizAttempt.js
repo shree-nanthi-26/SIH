@@ -36,7 +36,18 @@ const quizAttemptSchema = new mongoose.Schema(
     totalQuestions: { type: Number, required: true },
     correctCount: { type: Number, required: true },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
+
+/**
+ * Virtual indicating whether attempt passed (benchmark >= 60%).
+ */
+quizAttemptSchema.virtual('passed').get(function () {
+  return this.score >= 60;
+});
 
 module.exports = mongoose.model('QuizAttempt', quizAttemptSchema);

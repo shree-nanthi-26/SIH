@@ -6,6 +6,7 @@ const {
   updateOfficerProfile,
 } = require('../controllers/officerController');
 const { getOfficerAttempts } = require('../controllers/quizController');
+const { askAssistant } = require('../controllers/assistantController');
 const { protect } = require('../middleware/auth');
 
 const router = express.Router();
@@ -17,5 +18,6 @@ router.put('/:id/profile', updateOfficerProfile);
 router.get('/:id/skill-gap', getSkillGap);
 router.get('/:id/learning-path', getLearningPath);
 router.get('/:id/attempts', getOfficerAttempts);
+router.post('/:id/assistant', askAssistant);
 
 module.exports = router;

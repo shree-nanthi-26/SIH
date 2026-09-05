@@ -2,6 +2,10 @@ const QuizAttempt = require('../models/QuizAttempt');
 const OfficerProfile = require('../models/OfficerProfile');
 const User = require('../models/User');
 const { computeSkillGap } = require('../services/skillGapService');
+const {
+  computeTopGapSkills,
+  computeCompetencyTrend,
+} = require('../services/analyticsService');
 const { sendSuccess } = require('../utils/response');
 const { asyncHandler } = require('../middleware/errorHandler');
 
@@ -67,11 +71,19 @@ const getAdminDashboard = asyncHandler(async (req, res) => {
     roleProfile: { $ne: null },
   });
 
+  // Predictive analytics: Top emerging skill gaps and 6-month competency trend
+  const [topGapSkills, competencyTrend] = await Promise.all([
+    computeTopGapSkills(5),
+    computeCompetencyTrend(6),
+  ]);
+
   sendSuccess(res, 200, {
     totalOfficers,
     totalProfiles,
     assignedRoles,
     quizStats: quizAgg[0] || { avgScore: 0, totalAttempts: 0 },
+    topGapSkills,
+    competencyTrend,
   });
 });
 

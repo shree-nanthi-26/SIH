@@ -20,7 +20,8 @@ const generateMCQs = async (text) => {
                 question: "What is the capital of India?",
                 options: ["Mumbai", "New Delhi", "Chennai", "Kolkata"],
                 correctIndex: 1,
-                explanation: "New Delhi is the capital of India."
+                explanation: "New Delhi is the capital of India.",
+                difficulty: "easy"
             }
         ];
     }
@@ -32,14 +33,15 @@ const generateMCQs = async (text) => {
 
     const basePrompt = `
 You are an expert educational content creator. Based on the following text, generate exactly 10 multiple-choice questions (MCQs).
-Each question must have exactly 4 options and 1 correct answer.
+Each question must have exactly 4 options, 1 correct answer, and an adaptive difficulty rating ('easy', 'medium', or 'hard') targeting ~3 easy, 4 medium, and 3 hard questions.
 You must return the response as a strict JSON array of objects, with NO markdown formatting, NO backticks, and NO extra text.
 The JSON array should contain objects with the following schema:
 {
   "question": "string",
   "options": ["string", "string", "string", "string"],
   "correctIndex": integer (0 to 3),
-  "explanation": "string"
+  "explanation": "string",
+  "difficulty": "easy" | "medium" | "hard"
 }
 
 Text to use:
@@ -64,6 +66,9 @@ ${chunkedText}
             if (!item.question || !Array.isArray(item.options) || item.options.length !== 4 || 
                 typeof item.correctIndex !== 'number' || item.correctIndex < 0 || item.correctIndex > 3) {
                 throw new Error("Invalid MCQ schema in response");
+            }
+            if (!['easy', 'medium', 'hard'].includes(item.difficulty)) {
+                item.difficulty = 'medium';
             }
         }
         

@@ -21,6 +21,16 @@ const questionSchema = new mongoose.Schema(
       max: 3,
     },
     explanation: { type: String, default: '' },
+    /**
+     * Difficulty level assigned by Gemini during generation.
+     * Used by adaptiveQuizService to weight question selection
+     * based on the officer's recent performance history.
+     */
+    difficulty: {
+      type: String,
+      enum: ['easy', 'medium', 'hard'],
+      default: 'medium',
+    },
   },
   { _id: true }
 );
